@@ -28,12 +28,16 @@ The plugin repository also contains the source code of the Arduino program which
 
 ## Hardware
 
-There are two possible hardware configurations available, a simple breadboard version using an arduino uno, a 4x4 matrix keypad and 8 leds. 
-
-**TODO Add Fritzing schematic**
+There are two possible hardware configurations available, a simple breadboard version using an Arduino UNO, a 4x4 matrix keypad and 8 leds. 
 
 ![Alt text](/doku/Fritzing.PNG)
 
-In the future there will also be a custom made PCB which includes all necessary parts and uses cherry mx switches for the keys. The device will still be compatible with the arduino ide for easy upgrading and hacking. Development of the PCB has not yet started but is scheduled for mid of april.
+Of course you could build the circuit in a different way, you just have to change the pin assignments in the software.
+
+If you stick to the recommended schematic you will end up with a key assignment like this:
+
+![Alt text](/doku/Keypad.PNG)
+
+In the future there will also be a custom made PCB which includes all necessary parts and uses cherry mx switches for the keys. The device will still be compatible with the Arduino IDE for easy upgrading and hacking. Development of the PCB has not yet started but is scheduled for mid of april.
 
 Regardless of the type of the used hardware, programming is done using the Arduino IDE and the sourcecodes from the arduino/OctoRemote/ folder.
