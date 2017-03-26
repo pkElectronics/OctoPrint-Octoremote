@@ -1,5 +1,14 @@
 # coding=utf-8
 from __future__ import absolute_import
+
+### (Don't forget to remove me)
+# This is a basic skeleton for your plugin's __init__.py. You probably want to adjust the class name of your plugin
+# as well as the plugin mixins it's subclassing from. This is really just a basic skeleton to get you started,
+# defining your plugin as a template plugin, settings and asset plugin. Feel free to add or remove mixins
+# as necessary.
+#
+# Take a look at the documentation on what other plugin mixins are available.
+
 import octoprint.plugin
 import serial
 import binascii
@@ -18,12 +27,9 @@ class OctoremotePlugin(octoprint.plugin.SettingsPlugin,
 
 	def get_settings_defaults(self):
 		return dict(
-			comport="COM3",
-            baudrate=9600,
-            extrusionAmount=5,
-			retractionamount=5,
-			numberOfTools=3,
-			movementSteps=[0.1,1,10,100]
+			port="COM3",
+                        baud=9600,
+                        kekse="ja"
 		)
 
 	def get_template_vars(self):
@@ -32,10 +38,8 @@ class OctoremotePlugin(octoprint.plugin.SettingsPlugin,
         kekse=self._settings.get(["kekse"])
 		)
 
-	def on_settings_save(self):
-		self.stop_com_thread()
-		self.start_com_thread()
-		#restart the thread
+	def on_settings_save(data):
+		pass #restart the thread
 	##~~ AssetPlugin mixin
 
 	def get_assets(self):
@@ -69,17 +73,10 @@ class OctoremotePlugin(octoprint.plugin.SettingsPlugin,
 			)
 		)
 	def on_after_startup(self):
-		self.start_com_thread()
-
-	def start_com_thread(self):
-		conf = self.get_template_vars()
-		self.comthread = SerialThread(self,conf)
+                conf = self.get_template_vars()
+		self.comthread = SerialThread(self,conf['port'],conf['baud'])
 		self.comthread.start()
-		self.comthread.daemon = True
-	def stop_com_thread(self):
-		self.comthread.interrupt()
-		self.comthread.join()
-
+		self._logger.info("Hello woot!")
 
 	def on_shutdown(self):
 				self._logger.info("on shutdown")
@@ -137,32 +134,16 @@ class SerialThread(Thread):
 	movementIndex = 0
 	toolIndex = 0
 
-#	comport = "COM3",#
-	#baudrate = 9600,
-	#extrusionAmount = 5,
-	#retractionamount = 5,
-	#numberOfTools = 3,
-	#movementSteps = [0.1, 1, 10, 100]
 
-	def __init__(self,callbackClass,config):
+	def __init__(self,callbackClass,pname,brate):
 		Thread.__init__(self)
+		self.portname = pname
 		self.cbClass = callbackClass
-		self.portname = config["comport"]
-		self.baudrate = config["baudrate"]
-		self.toolcount = config["numberOfTools"]
-		if self.toolcount > 4:
-			callbackClass.getLogger().info("OctoRemote sanity check: Reverted Toolcount to 4, was"+self.toolcount)
-			self.toolcount = 4
-
-		self.extrusionAmount = config["extrusionAmount"]
-		self.retractionAmount = config["retractionAmount"]
-		self.movementOptions = config["movementSteps"]
-		try:
-			self.port = serial.Serial(self.portname, baudrate=self.baudrate, timeout=3.0)
-		except:
-			self.interrupt()
-			callbackClass.getLogger().error("Octoremote, could not open comport")
-		callbackClass.getLogger().info("Octoremote Comthread started")
+		self.baudrate = brate
+		self.port = serial.Serial(self.portname, baudrate=self.baudrate, timeout=3.0)
+		callbackClass.getLogger().exception("test")
+		self.extrusionAmount = 5;
+		self.retractionAmount = 5;
 
 
 	def run(self):
