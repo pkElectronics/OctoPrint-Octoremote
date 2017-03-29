@@ -188,7 +188,9 @@ class SerialThread(Thread):
 
 	def run(self):
 		self.cbClass.getLogger().info("Thread started")
-		self.sendAck()
+		self.sendCommandWithPayload(0x20, [self.movementIndex], 1)
+		self.sendCommandWithPayload(0x20, [self.toolIndex + 4], 1)
+
 		while not self.interrupted:
 			try:
 				readbyte = self.port.read(1)
