@@ -26,7 +26,15 @@ The plugin repository also contains the source code of the Arduino program which
 
 ## Configuration
 
-**TODO:** Describe your plugin's configuration options (if any).
+Use the OctoRemote Plugin page from the Octoprint settings to adjust the parameters to your needs. 
+
+The correct setting for the Comport field is something you have to figure out for yourself, using either for example the Windows device manager or the /dev/tty/\* files under linux. Usually an Arduino UNO will appear as something like /dev/ttyACM0. 
+
+The default settings were developed and tested using an Anet A8 printer.
+
+## Usage
+
+It´s pretty easy, wait for Octoprint to start and start hitting the buttons, movement distance starts at Stage 1 and goes up until Stage 4 with each keypress. From Stage 4 it jumps back to 1. Same holds true for the extruder selection except that it wraps around when the number of configured extruders is reached. Keep in mind that extruding and retracting material only works if the hotend has the right temperature.
 
 ## Hardware
 
