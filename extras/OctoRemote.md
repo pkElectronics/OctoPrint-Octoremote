@@ -3,41 +3,47 @@ layout: plugin
 
 id: OctoRemote
 title: OctoPrint-Octoremote
-description: TODO
+description: Control your 3D-Printer with an Arduino and a Keypad or a custom remote
 author: Pascal Krumme
 license: AGPLv3
 
-# TODO
-date: today's date in format YYYY-MM-DD, e.g. 2015-04-21
+date: 2017-03-29
 
 homepage: https://github.com/pkElectronics/OctoPrint-Octoremote
 source: https://github.com/pkElectronics/OctoPrint-Octoremote
 archive: https://github.com/pkElectronics/OctoPrint-Octoremote/archive/master.zip
 
-# TODO set this to true if your plugin uses the dependency_links setup parameter to include
+
 # library versions not yet published on PyPi. SHOULD ONLY BE USED IF THERE IS NO OTHER OPTION!
 follow_dependency_links: false
 
 # TODO
 tags:
-- a list
-- of tags
-- that apply
-- to your plugin
-- (take a look at the existing plugins for what makes sense here)
+- printing
+- remote
+- arduino
+- genuino
+- control
+- keypad
+- remotecontrol
+- ui
 
 # TODO
 screenshots:
-- url: url of a screenshot
-  alt: alt-text of a screenshot
-  caption: caption of a screenshot
-- url: url of another screenshot
-  alt: alt-text of another screenshot
-  caption: caption of another screenshot
-- ...
-
-# TODO
-featuredimage: url of a featured image for your plugin
+- url: https://github.com/pkElectronics/OctoPrint-Octoremote/doku/Hardware1.JPG
+  alt: Arduino with Keypad
+  caption: Necessary Components for Version1 Hardware
+- url: https://github.com/pkElectronics/OctoPrint-Octoremote/doku/SettingsScreenshot.PNG
+  alt: Screenshot of the OctoRemote settings page
+  caption: OctoRemote default settings
+- url: https://github.com/pkElectronics/OctoPrint-Octoremote/doku/Fritzing.PNG
+  alt: Fritzing schematic for Version1 Hardware
+  caption: Fritzing schematic
+- url: https://github.com/pkElectronics/OctoPrint-Octoremote/doku/Keypad.PNG
+  alt: Mapping of the Keypad key to the Octoprint functions
+  caption: Key assignment of the 4+4 keypad
+  
+featuredimage: https://github.com/pkElectronics/OctoPrint-Octoremote/doku/Hardware1.JPG
 
 compatibility:
   # list of compatible versions, for example 1.2.0. If left empty no specific version requirement will be assumed
@@ -51,5 +57,5 @@ compatibility:
   - macos
 ---
 
-**TODO**: Longer description of your plugin, configuration examples etc. This part will be visible on the page at
-http://plugins.octoprint.org/plugin/OctoRemote/
+**TODO**: OctoRemote enables you to perform all usual printer movements with a simple keypress. Current version implements moving the X-, Y- and Z-Axis, homing and controlling up to four extruders.
+Movement distance of the extruders can also be controlled via the keypad. An embedded version of the remote controller is also in the making and will be released soon.

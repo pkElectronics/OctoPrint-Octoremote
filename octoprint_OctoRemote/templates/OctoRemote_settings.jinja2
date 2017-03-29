@@ -1,0 +1,72 @@
+<form class="form-horizontal">
+	<h3>{{ _('Communication Settings') }}</h3>
+    <div class="control-group" title="{{ _('Serial port to connect to, setting this to AUTO will make OctoPrint try to automatically find the right setting') }}">
+		<label class="control-label" for="settings-octoremote-serialPort">{{ _('Serial Port') }}</label>
+		<div class="controls">
+			<select id="settings-OctoRemote-serialPort" data-bind="options: serial_portOptions, value: settings.plugins.OctoRemote.comport"></select>
+		</div>
+	</div>
+    <div class="control-group" title="{{ _('Serial baud rate to connect with, setting this to AUTO will make OctoPrint try to automatically find the right setting') }}">
+        <label class="control-label" for="settings-octoremote-baudrate">{{ _('Baudrate') }}</label>
+        <div class="controls">
+            <select id="settings-octoremote-baudrate" data-bind="options: settings.plugins.OctoRemote.baudrateOpt, value: settings.plugins.OctoRemote.baudrate"></select>
+        </div>
+    </div>
+	<h3>{{ _('Axis movement distance') }}</h3>
+	<div class="control-group" title="{{_('Einstellungen für Achsenbewegungen') }}">
+        <label class="control-label" for="settings-octoremote-movement1">{{ _('Stage 1') }}</label>
+        <div class="controls">
+			<div class="input-append">
+            <input id="settings-octoremote-movement1" type="number" class="input-mini text-right" data-bind="value: settings.plugins.OctoRemote.movementStep1">
+			<span class="add-on">mm</span>
+			</div>
+        </div>
+		<label class="control-label" for="settings-octoremote-movement2">{{ _('Stage 2') }}</label>
+        <div class="controls">
+			<div class="input-append">
+            <input id="settings-octoremote-movement2" type="number" class="input-mini text-right" data-bind="value: settings.plugins.OctoRemote.movementStep2">
+			<span class="add-on">mm</span>
+			</div>
+        </div>
+		<label class="control-label" for="settings-octoremote-movement3">{{ _('Stage 3') }}</label>
+        <div class="controls">
+			<div class="input-append">
+            <input id="settings-octoremote-movement3" type="number" class="input-mini text-right" data-bind="value: settings.plugins.OctoRemote.movementStep3">
+			<span class="add-on">mm</span>
+			</div>
+        </div>
+		<label class="control-label" for="settings-octoremote-movement4">{{ _('Stage 4') }}</label>
+        <div class="controls">
+			<div class="input-append">		
+            <input id="settings-octoremote-movement4" type="number" class="input-mini text-right" data-bind="value: settings.plugins.OctoRemote.movementStep4">
+			<span class="add-on">mm</span>
+			</div>
+        </div>
+		
+	<h3>{{ _('Extrusion Settings') }}</h3>
+    </div>
+		<div class="control-group" title="{{_('Einstellungen für Extrusion und Retraction') }}">
+			<label class="control-label" for="settings-octoremote-extrusion">{{ _('Extrusion') }}</label>
+			<div class="controls">
+				<div class="input-append">		
+				<input id="settings-octoremote-extrusion" type="number" class="input-mini text-right" data-bind="value: settings.plugins.OctoRemote.extrusionAmount">
+				<span class="add-on">mm</span>
+			</div>
+			</div>
+			<label class="control-label" for="settings-octoremote-retraction">{{ _('Retraction') }}</label>
+			<div class="controls">
+			<div class="input-append">					
+				<input id="settings-octoremote-retraction" type="number" class="input-mini text-right" data-bind="value: settings.plugins.OctoRemote.retractionAmount">
+				<span class="add-on">mm</span>
+			</div>
+			</div>
+			
+			<label class="control-label" for="settings-octoremote-extrudercount">{{ _('Installed Extruders') }}</label>
+			<div class="controls">
+				<input id="settings-octoremote-extrudercount" min="1" max="4" type="number" class="input-mini text-right" data-bind="value: settings.plugins.OctoRemote.numberOfTools">
+			</div>
+			
+		</div>
+
+    
+</form>

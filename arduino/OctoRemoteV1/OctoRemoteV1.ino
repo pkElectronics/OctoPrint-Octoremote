@@ -45,7 +45,7 @@ long lastSendTime = 0;
 char lastSendKey = 0;
 char lastSendCMD = 0;
 void setup(){
-  Serial.begin(9600);
+  Serial.begin(115200);
   customKeypad.addEventListener(keypadEvent);
   pinMode(LED_G1,OUTPUT);
   pinMode(LED_G2,OUTPUT);
@@ -86,6 +86,7 @@ void sendKeyToHost(char key,char cmd){
   lastSendKey = key;
   lastSendCMD = cmd;
   lastSendTime = millis();
+  retryCounter= 0;
 }
 
 void keypadEvent(KeypadEvent key){
@@ -113,57 +114,68 @@ unsigned char payload[256];
 unsigned char payloadIndex = 0;
 unsigned char parsingState = 0;
 uint32_t telegramCRC = 0;
+uint8_t retryCounter = 0;
   
 void loop(){
   char key = customKeypad.getKey();
-  if(ackPending && millis()- lastSendTime > 2000){
+  if(ackPending && (millis()- lastSendTime > 2000) && retryCounter < 3){
     resendLastCommand();
+    retryCounter++;
   }
+
   if(Serial.available() > 0){
     unsigned char readbyte = Serial.read();
-
+    unsigned long b = readbyte;
+    
     switch(parsingState){
       case 0: //STX
         if(readbyte == 0x80) parsingState++;
         payloadIndex = 0;
         telegramLength = 0;
         telegramCommand = 0;
+        telegramCRC = 0;
         break;
       case 1: //LENGTH
         telegramLength = readbyte;
+        //payloadIndex = telegramLength -7;
         parsingState++;
         break;
       case 2: //COMMAND
         telegramCommand = readbyte;
         parsingState++;
-        if(telegramLength == 7) parsingState++; //telegram ohne payload 
+        if(telegramLength == 7)parsingState++; //telegram ohne payload 
         break;
       case 3: //payload
         payload[payloadIndex] = readbyte;
+        
         payloadIndex++;
-        if( (telegramLength - 4 - 3 - payloadIndex)   == 0){
+        if( telegramLength ==  (payloadIndex + 7)){
           parsingState++;
         }
-      break;
+        break;
 
        case 4: //CRC
        case 5:
        case 6:
-        telegramCRC += readbyte << (8*(parsingState-4));
+        telegramCRC |= b << (8*(parsingState-4));
+        parsingState++;
         break;
        case 7:
-        telegramCRC += readbyte << (8*(parsingState-4));
+        
+        telegramCRC |= b << (8*(parsingState-4));
         crc.reset();
         crc.update(0x80);
+        
         crc.update(telegramLength);
+        
         crc.update(telegramCommand);
+        
         for(int i = 0; i < payloadIndex; i++){
           crc.update(payload[i]);
+          
         }
+        parsingState = 0;
         if(crc.finalize() == telegramCRC){
-          sendACK();
-          parsingState = 0;
-
           switch(telegramCommand){
             case COMMAND_NACK:
               resendLastCommand();
@@ -174,15 +186,25 @@ void loop(){
             break;
 
             case COMMAND_SETLED:
+              ackPending=false;
+              sendACK();
               if(payload[0] >= 4){
-                for(int i = 0; i < 3 ; i++){
-                  if(payload[0] - 4 == i) digitalWrite(ledMapRed[i],HIGH);
-                  else digitalWrite(ledMapRed[i],LOW); 
+                for(int i = 0; i < 4 ; i++){
+                  if(payload[0] - 4 == i){
+                    digitalWrite(ledMapRed[i],HIGH);
+                  }
+                  else{
+                    digitalWrite(ledMapRed[i],LOW); 
+                  }
                 }
               }else{
-                for(int i = 0; i < 3 ; i++){
-                  if(payload[0] == i) digitalWrite(ledMapGreen[i],HIGH);
-                  else digitalWrite(ledMapGreen[i],LOW); 
+                for(int i = 0; i < 4 ; i++){
+                  if(payload[0] == i){
+                    digitalWrite(ledMapGreen[i],HIGH);
+                  }
+                  else{
+                    digitalWrite(ledMapGreen[i],LOW); 
+                  }
                 }
               }
             break;
@@ -203,7 +225,7 @@ void resendLastCommand(){
 
 
 void sendSingleCMD(char command){
-   crc.reset();
+  crc.reset();
   crc.update(TRANSMISSION_HEADER);
   crc.update(7);
   crc.update(command);
@@ -212,7 +234,7 @@ void sendSingleCMD(char command){
   Serial.write(7); //LENGTH
   Serial.write(command); //Command (Key Pressed)
   for(int i = 0; i < 4 ; i++){
-    Serial.write( (checksum>>(8*i) & 0xFF));
+    Serial.write( ((checksum>>(8*i)) & 0xFF));
   }
 }
 void sendACK(){

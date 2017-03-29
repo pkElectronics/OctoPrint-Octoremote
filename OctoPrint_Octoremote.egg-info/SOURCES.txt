@@ -12,4 +12,5 @@ octoprint_OctoRemote/__init__.py
 octoprint_OctoRemote/static/css/OctoRemote.css
 octoprint_OctoRemote/static/js/OctoRemote.js
 octoprint_OctoRemote/static/less/OctoRemote.less
+octoprint_OctoRemote/templates/OctoRemote_settings.jinja2
 octoprint_OctoRemote/templates/README.txt
