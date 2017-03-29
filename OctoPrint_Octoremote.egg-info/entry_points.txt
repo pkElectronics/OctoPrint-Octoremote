@@ -1,3 +1,0 @@
-[octoprint.plugin]
-OctoRemote = octoprint_OctoRemote
-
