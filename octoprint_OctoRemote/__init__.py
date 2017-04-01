@@ -55,6 +55,7 @@ class OctoremotePlugin(octoprint.plugin.SettingsPlugin,
 		self.start_com_thread()
 		#restart the thread
 	##~~ AssetPlugin mixin
+		return data
 
 	def get_assets(self):
 		# Define your plugin's asset files to automatically include in the
