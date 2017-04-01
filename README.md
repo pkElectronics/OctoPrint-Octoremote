@@ -26,6 +26,20 @@ The plugin repository also contains the source code of the Arduino program which
 
 ## Configuration
 
+Add following block to your config.yaml plugins section.
+
+  octoremote:
+    comport: /dev/ttyACM0
+    baudrate: 115200
+    extrusionAmount: 5
+    retractionAmount: 5
+    numberOfTools: 1
+    movementStep1: 0.1
+    movementStep2: 1
+    movementStep3: 10
+    movementStep4: 100
+
+
 Use the OctoRemote Plugin page from the Octoprint settings to adjust the parameters to your needs. 
 
 The correct setting for the Comport field is something you have to figure out for yourself, using either for example the Windows device manager or the /dev/tty/\* files under linux. Usually an Arduino UNO will appear as something like /dev/ttyACM0. 
