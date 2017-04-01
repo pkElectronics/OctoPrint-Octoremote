@@ -26,7 +26,7 @@ The plugin repository also contains the source code of the Arduino program which
 
 ## Configuration
 
-Add following block to your config.yaml plugins section.
+Add following block to your config.yaml plugins section. At the moment there are some issues with the settings using the gui so you will have to edit the config by hand.
 
   octoremote:
     comport: /dev/ttyACM0
