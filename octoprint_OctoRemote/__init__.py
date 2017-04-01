@@ -49,13 +49,12 @@ class OctoremotePlugin(octoprint.plugin.SettingsPlugin,
 			dict(type="settings", custom_bindings=False)
 		]
 
-
 	def on_settings_save(self,data):
 		self.stop_com_thread()
 		self.start_com_thread()
 		#restart the thread
 	##~~ AssetPlugin mixin
-		octoprint.plugin.SettingsPlugin.on_settings_save(self, data)
+		octoprint.plugin.SettingsPlugin.on_settings_save(data)
 
 	def get_assets(self):
 		# Define your plugin's asset files to automatically include in the
