@@ -70,6 +70,7 @@ char ackPending = false;
 long lastSendTime = 0;
 char lastSendKey = 0;
 char lastSendCMD = 0;
+uint8_t retryCounter = 0;
 void setup(){
   Serial.begin(115200);
   customKeypad.addEventListener(keypadEvent);
@@ -140,7 +141,7 @@ unsigned char payload[256];
 unsigned char payloadIndex = 0;
 unsigned char parsingState = 0;
 uint32_t telegramCRC = 0;
-uint8_t retryCounter = 0;
+
   
 void loop(){
   char key = customKeypad.getKey();

@@ -7,7 +7,7 @@ description: Control your 3D-Printer with an Arduino and a Keypad or a custom re
 author: Pascal Krumme
 license: AGPLv3
 
-date: 2017-03-29
+date: 2017-03-01
 
 homepage: https://github.com/pkElectronics/OctoPrint-Octoremote
 source: https://github.com/pkElectronics/OctoPrint-Octoremote
