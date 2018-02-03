@@ -8,52 +8,77 @@ import time
 
 from time import sleep
 
-class OctoremotePlugin(octoprint.plugin.SettingsPlugin,
-                       octoprint.plugin.AssetPlugin,
-                       octoprint.plugin.TemplatePlugin,
-					   octoprint.plugin.StartupPlugin,
-                       octoprint.plugin.ShutdownPlugin):
 
+class OctoremotePlugin(octoprint.plugin.SettingsPlugin,
+					   octoprint.plugin.AssetPlugin,
+					   octoprint.plugin.TemplatePlugin,
+					   octoprint.plugin.StartupPlugin,
+					   octoprint.plugin.ShutdownPlugin):
 	##~~ SettingsPlugin mixin
 
 	def get_settings_defaults(self):
 		return dict(
 			comport="COM3",
-            baudrate=115200,
-            baudrateOpt=[9600,19200,115200],
-            extrusionAmount=5,
+			baudrate=115200,
+			baudrateOpt=[9600, 19200, 115200],
+			extrusionAmount=5,
 			retractionAmount=5,
 			numberOfTools=3,
-			movementSteps=[0.1,1,10,100],
-			movementStep1 = 0.1,
-			movementStep2 = 1,
-			movementStep3 = 10,
-			movementStep4 = 100
+			movementSteps=[0.1, 1, 10, 100],
+			movementStep1=0.1,
+			movementStep2=1,
+			movementStep3=10,
+			movementStep4=100,
+			userCommand1 = "",
+			userCommand2="",
+			userCommand3="",
+			userCommand4="",
+			userCommand5="",
+
+			userKeyMode1 = 0,
+			userKeyMode2=0,
+			userKeyMode3=0,
+			userKeyMode4=0,
+			userKeyMode5=0,
+
+			userCommands=["", "", "", "", ""],
+			userKeyModes=[0, 0, 0, 0, 0],  # 0 -> aus, 1 -> GCODE, 2 -> Script
+			userKeyModeOptions=["OFF", "GCODE", "SCRIPT"]
 
 		)
 
 	def get_config_vars(self):
 		return dict(
 			comport=self._settings.get(["comport"]),
-        	baudrate=self._settings.get(["baudrate"]),
+			baudrate=self._settings.get(["baudrate"]),
 			baudrateOpt=self._settings.get(["baudrateOpt"]),
 			extrusionAmount=self._settings.get(["extrusionAmount"]),
-			retractionAmount = self._settings.get(["retractionAmount"]),
+			retractionAmount=self._settings.get(["retractionAmount"]),
 			numberOfTools=self._settings.get(["numberOfTools"]),
-			movementSteps=[self._settings.get(["movementStep1"]),self._settings.get(["movementStep2"]),self._settings.get(["movementStep3"]),self._settings.get(["movementStep4"])]
+			movementSteps=[self._settings.get(["movementStep1"]), self._settings.get(["movementStep2"]),
+						   self._settings.get(["movementStep3"]), self._settings.get(["movementStep4"])],
+			userCommands=[ self._settings.get(["userCommand1"]),self._settings.get(["userCommand2"]),
+						   self._settings.get(["userCommand3"]),self._settings.get(["userCommand4"]),
+						   self._settings.get(["userCommand5"])],
+
+			userKeyModes=[ self._settings.get(["userKeyMode1"]),self._settings.get(["userKeyMode2"])
+						 , self._settings.get(["userKeyMode3"]),self._settings.get(["userKeyMode4"])
+						 , self._settings.get(["userKeyMode5"])],
+
 		)
 
 	def get_template_configs(self):
 		return [
-			#dict(type="navbar", custom_bindings=False),
+			# dict(type="navbar", custom_bindings=False),
 			dict(type="settings", custom_bindings=False)
 		]
 
-	def on_settings_save(self,data):
-		octoprint.plugin.SettingsPlugin.on_settings_save(self,data)
+	def on_settings_save(self, data):
+		octoprint.plugin.SettingsPlugin.on_settings_save(self, data)
 		self.stop_com_thread()
 		self.start_com_thread()
-		#restart the thread
+
+	# restart the thread
 	##~~ AssetPlugin mixin
 
 
@@ -87,39 +112,42 @@ class OctoremotePlugin(octoprint.plugin.SettingsPlugin,
 				pip="https://github.com/pkElectronics/OctoPrint-Octoremote/archive/{target_version}.zip"
 			)
 		)
+
 	def on_after_startup(self):
 		self.start_com_thread()
 
 	def start_com_thread(self):
 		conf = self.get_config_vars()
-		self.comthread = SerialThread(self,conf)
-		#self.comthread.start()
+		self.comthread = SerialThread(self, conf)
+
+	# self.comthread.start()
 
 	def stop_com_thread(self):
 		self.comthread.interrupt()
 		self.comthread.join()
 
-
 	def on_shutdown(self):
-				self._logger.info("on shutdown")
-				self.comthread.interrupted = True
-				self.comthread.interrupt()
+		self._logger.info("on shutdown")
+		self.comthread.interrupted = True
+		self.comthread.interrupt()
 
-
-#Other stuff below
-#
-#
+	# Other stuff below
+	#
+	#
 	def getPrinterObject(self):
 		return self._printer
+
 	def getLogger(self):
 		return self._logger
 
+	# serial.tools.list_ports listet alle comports auf
 
-	#serial.tools.list_ports listet alle comports auf
+
 # If you want your plugin to be registered within OctoPrint under a different name than what you defined in setup.py
 # ("OctoPrint-PluginSkeleton"), you may define that here. Same goes for the other metadata derived from setup.py that
 # can be overwritten via __plugin_xyz__ control properties. See the documentation for that.
 __plugin_name__ = "Octoremote Plugin"
+
 
 def __plugin_load__():
 	global __plugin_implementation__
@@ -130,47 +158,52 @@ def __plugin_load__():
 		"octoprint.plugin.softwareupdate.check_config": __plugin_implementation__.get_update_information
 	}
 
-class SerialThread(Thread):
-	#Fixed responses
-	ackResponse = bytearray([0x80, 0x07, 0x01, 0xC3, 0x64, 0x32,0x26])#263264C3
-	nackResponse = bytearray([0x80, 0x07, 0x02, 0x79, 0x35, 0x3B, 0xBF])#BF3B3579
 
-	#comport parameters
+class SerialThread(Thread):
+	# Fixed responses
+	ackResponse = bytearray([0x80, 0x07, 0x01, 0xC3, 0x64, 0x32, 0x26])  # 263264C3
+	nackResponse = bytearray([0x80, 0x07, 0x02, 0x79, 0x35, 0x3B, 0xBF])  # BF3B3579
+
+	# comport parameters
 	portname = ""
 	baudrate = 9600
 
-	#thread parameters
+	# thread parameters
 	interrupted = False
 
-	#msg parser vars
+	# msg parser vars
 	msgParsingState = 0
 	bytesRead = []
 	payload = []
 	countBytesRead = 0
 	ackPending = False
 
-	#printerSettings
-	movementOptions = [0.1,1,10,100]
-	toolOptions = ["tool0","tool1","tool2","tool3"]
+	# printerSettings
+	movementOptions = [0.1, 1, 10, 100]
+	toolOptions = ["tool0", "tool1", "tool2", "tool3"]
 
 	movementIndex = 0
 	toolIndex = 0
 
-#	comport = "COM3",#
-	#baudrate = 9600,
-	#extrusionAmount = 5,
-	#retractionamount = 5,
-	#numberOfTools = 3,
-	#movementSteps = [0.1, 1, 10, 100]
+	#	comport = "COM3",#
+	# baudrate = 9600,
+	# extrusionAmount = 5,
+	# retractionamount = 5,
+	# numberOfTools = 3,
+	# movementSteps = [0.1, 1, 10, 100]
 
-	def __init__(self,callbackClass,config):
+	def __init__(self, callbackClass, config):
 		Thread.__init__(self)
 		self.cbClass = callbackClass
 		self.portname = config["comport"]
 		self.baudrate = config["baudrate"]
-		self.toolcount = config["numberOfTools"]
+		self.toolcount = int(config["numberOfTools"])
+
+		self.userCommands = config["userCommands"]
+		self.userKeyModes = config["userKeyModes"]
+
 		if self.toolcount > 4:
-			callbackClass.getLogger().info("OctoRemote sanity check: Reverted Toolcount to 4, was"+self.toolcount)
+			callbackClass.getLogger().info("OctoRemote sanity check: Reverted Toolcount to 4, was" + self.toolcount)
 			self.toolcount = 4
 
 		self.extrusionAmount = config["extrusionAmount"]
@@ -180,12 +213,10 @@ class SerialThread(Thread):
 			self.port = serial.Serial(self.portname, baudrate=self.baudrate, timeout=3.0)
 		except:
 			self.interrupt()
-			callbackClass.getLogger().error("Octoremote, could not open comport:"+self.portname)
+			callbackClass.getLogger().error("Octoremote, could not open comport:" + self.portname)
 		callbackClass.getLogger().info("Octoremote Comthread started")
-		self.daemon = True
+		self.daemon = False
 		self.start()
-
-
 
 	def run(self):
 		self.cbClass.getLogger().info("Thread started")
@@ -198,51 +229,51 @@ class SerialThread(Thread):
 				if self.msgParsingState == 0:
 					if readbyte == '\x80':
 						self.bytesRead.append(ord(readbyte))
-						self.msgParsingState+=1
-						self.countBytesRead+=1
+						self.msgParsingState += 1
+						self.countBytesRead += 1
 
 				elif self.msgParsingState == 1:
 					self.telegramLength = ord(readbyte)
 					self.bytesRead.append(ord(readbyte))
-					self.msgParsingState+=1
-					self.countBytesRead+=1
+					self.msgParsingState += 1
+					self.countBytesRead += 1
 
 				elif self.msgParsingState == 2:
 					self.command = ord(readbyte)
 					self.bytesRead.append(ord(readbyte))
-					self.msgParsingState+=1
-					self.countBytesRead+=1
+					self.msgParsingState += 1
+					self.countBytesRead += 1
 					if self.telegramLength == 7:
-						self.msgParsingState+=1
+						self.msgParsingState += 1
 
 				elif self.msgParsingState == 3:
 					self.bytesRead.append(ord(readbyte))
 					self.payload.append(ord(readbyte))
-					self.countBytesRead+=1
-					if self.countBytesRead == self.telegramLength-4:
-						self.msgParsingState+=1
+					self.countBytesRead += 1
+					if self.countBytesRead == self.telegramLength - 4:
+						self.msgParsingState += 1
 				elif self.msgParsingState == 4:
 					self.crc32 = ord(readbyte)
-					self.countBytesRead+=1
-					self.msgParsingState+=1
+					self.countBytesRead += 1
+					self.msgParsingState += 1
 
 				elif self.msgParsingState == 5:
-					self.crc32 |= ord(readbyte)<<8
-					self.countBytesRead+=1
-					self.msgParsingState+=1
+					self.crc32 |= ord(readbyte) << 8
+					self.countBytesRead += 1
+					self.msgParsingState += 1
 
 				elif self.msgParsingState == 6:
-					self.crc32 |= ord(readbyte)<<16
-					self.countBytesRead+=1
-					self.msgParsingState+=1
+					self.crc32 |= ord(readbyte) << 16
+					self.countBytesRead += 1
+					self.msgParsingState += 1
 
 				elif self.msgParsingState == 7:
-					self.crc32 |= ord(readbyte)<<24
-					self.countBytesRead+=1
-					self.msgParsingState+=1
-					crc32 = binascii.crc32(bytearray(self.bytesRead)) % (1<<32)
+					self.crc32 |= ord(readbyte) << 24
+					self.countBytesRead += 1
+					self.msgParsingState += 1
+					crc32 = binascii.crc32(bytearray(self.bytesRead)) % (1 << 32)
 					if crc32 == self.crc32:
-						self.performActions(self.command,self.payload)
+						self.performActions(self.command, self.payload)
 					else:
 						self.sendNack()
 
@@ -255,20 +286,22 @@ class SerialThread(Thread):
 					self.command = 0
 			except:
 				pass
+		self.port.close()
+
 	def interrupt(self):
 		self.interrupted = True
 
-	def performActions(self,cmd,payload):
+	def performActions(self, cmd, payload):
 		try:
 			if cmd == 0x01:
 				self.ackPending = False
 			elif cmd == 0x02:
 				self.resendLastMessage()
-			elif cmd == 0x10: #key pressed
+			elif cmd == 0x10:  # key pressed
 				self.sendAck()
 				if payload[0] == 0x11:
-					self.movementIndex = (self.movementIndex+1)%4
-					self.sendCommandWithPayload(0x20,[self.movementIndex],1)
+					self.movementIndex = (self.movementIndex + 1) % 4
+					self.sendCommandWithPayload(0x20, [self.movementIndex], 1)
 				elif payload[0] == 0x12:
 					self.getPrinterObject().jog(dict(x=self.movementOptions[self.movementIndex]))
 				elif payload[0] == 0x13:
@@ -278,15 +311,18 @@ class SerialThread(Thread):
 				elif payload[0] == 0x21:
 					self.getPrinterObject().jog(dict(y=-self.movementOptions[self.movementIndex]))
 				elif payload[0] == 0x22:
-					self.getPrinterObject().home(["x","y"])
+					self.getPrinterObject().home(["x", "y"])
 				elif payload[0] == 0x23:
 					self.getPrinterObject().jog(dict(y=self.movementOptions[self.movementIndex]))
 				elif payload[0] == 0x24:
 					self.getPrinterObject().home(["z"])
 				elif payload[0] == 0x31:
-					self.toolIndex = (self.toolIndex + 1) % 4
-					self.sendCommandWithPayload(0x20, [self.toolIndex + 4], 1)
-					self.cbClass.getPrinterObject().change_tool(self.toolOptions[self.toolIndex])
+					if self.toolcount == 1:
+						self.performUserCommandByID(0)
+					else:
+						self.toolIndex = (self.toolIndex + 1) % self.toolcount
+						self.sendCommandWithPayload(0x20, [self.toolIndex + 4], 1)
+						self.cbClass.getPrinterObject().change_tool(self.toolOptions[self.toolIndex])
 				elif payload[0] == 0x32:
 					self.getPrinterObject().jog(dict(x=-self.movementOptions[self.movementIndex]))
 				elif payload[0] == 0x33:
@@ -303,16 +339,22 @@ class SerialThread(Thread):
 					else:
 						self.getPrinterObject().start_print()
 				elif payload[0] == 0x44:
-					self.getPrinterObject()
-			elif cmd == 0x11: #key released
+					self.performUserCommandByID(1)
+				elif payload[0] == 0x51:
+					self.performUserCommandByID(2)
+				elif payload[0] == 0x52:
+					self.performUserCommandByID(3)
+				elif payload[0] == 0x53:
+					self.performUserCommandByID(4)
+			elif cmd == 0x11:  # key released
 				self.stuff = ""
-				#self.cbClass._logger.info("KR")
-			elif cmd == 0x12: #key longpress
+			# self.cbClass._logger.info("KR")
+			elif cmd == 0x12:  # key longpress
 				self.stuff = ""
-				#self.cbClass._logger.info("KL")
+			# self.cbClass._logger.info("KL")
 			else:
 				self.stuff = ""
-				#self.cbClass._logger.info("FAIL")
+			# self.cbClass._logger.info("FAIL")
 		except:
 			pass
 
@@ -321,26 +363,27 @@ class SerialThread(Thread):
 			self.port.write(self.ackResponse)
 		except:
 			pass
+
 	def sendNack(self):
 		try:
 			self.port.write(self.nackResponse)
 		except:
 			pass
 
-	def sendCommandWithPayload(self,cmd,payload,payloadLength):
+	def sendCommandWithPayload(self, cmd, payload, payloadLength):
 		try:
 			message = []
 			message.append(0x80)
-			message.append(payloadLength+7)
+			message.append(payloadLength + 7)
 			message.append(cmd)
 			message = message + payload
 			bytes = bytearray(message)
-			crc32 = binascii.crc32(bytes) % (1<<32)
+			crc32 = binascii.crc32(bytes) % (1 << 32)
 
 			message.append(int(crc32 & 0xFF))
-			message.append(int(crc32>>8 & 0xFF))
-			message.append(int(crc32>>16 & 0xFF))
-			message.append(int(crc32>>24 & 0xFF))
+			message.append(int(crc32 >> 8 & 0xFF))
+			message.append(int(crc32 >> 16 & 0xFF))
+			message.append(int(crc32 >> 24 & 0xFF))
 			self.lastMessage = bytearray(message)
 			self.port.write(self.lastMessage)
 
@@ -353,15 +396,28 @@ class SerialThread(Thread):
 			self.port.write(self.lastMessage)
 		except:
 			pass
+
 	def getPrinterObject(self):
 		return self.cbClass.getPrinterObject()
-#KEypad matrix
- # 0x11 0x12 0x13 0x14
- # 0x21 0x22 0x23 0x24
- # 0x31 0x32 0x33 0x34
- # 0x41 0x42 0x43 0x44
 
- #keypad functions
+	def performUserCommandByID(self, ubid):
+		self.cbClass._logger.info("User Command %s", ubid)
+		self.cbClass._logger.info(self.userCommands[ubid])
+		self.cbClass._logger.info(self.userKeyModes[ubid])
+		if self.userCommands[ubid] != "":
+			if self.userKeyModes[ubid] == "GCODE":
+				self.getPrinterObject().commands(self.userCommands[ubid])
+			elif self.userKeyModes[ubid] == "SCRIPT":
+				self.getPrinterObject().script(self.userCommands[ubid])
+
+			# KEypad matrix
+			# 0x11 0x12 0x13 0x14
+			# 0x21 0x22 0x23 0x24
+			# 0x31 0x32 0x33 0x34
+			# 0x41 0x42 0x43 0x44
+
+			# keypad functions
+
 # Change Jog Distance	|	Y+			|	Extrude		|	Z+
 # X-					|	Home X+Y	|	X+			|	Home Z
 # Change Tool			|	Y-			|	Retract		|	Z-

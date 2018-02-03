@@ -1,0 +1,10 @@
+Metadata-Version: 1.0
+Name: OctoPrint-Octoremote
+Version: 0.1.2
+Summary: Octoprint Plugin for controlling your printer using a keypad and an Arduino
+Home-page: https://github.com/pkElectronics/OctoPrint-Octoremote
+Author: Pascal Krumme
+Author-email: pascalkrumme@gmail.com
+License: AGPLv3
+Description: UNKNOWN
+Platform: UNKNOWN

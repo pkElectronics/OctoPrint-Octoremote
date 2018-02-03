@@ -43,8 +43,9 @@
 			</div>
         </div>
 		
+	</div>
+
 	<h3>{{ _('Extrusion Settings') }}</h3>
-    </div>
 		<div class="control-group" title="{{_('Einstellungen für Extrusion und Retraction') }}">
 			<label class="control-label" for="settings-octoremote-extrusion">{{ _('Extrusion') }}</label>
 			<div class="controls">
@@ -67,6 +68,58 @@
 			</div>
 			
 		</div>
+	<h3>{{ _('User Buttons') }}</h3>
+	<div class="control-group" title="{{_('Einstellungen für User Buttons') }}">
+			<div>
+				<label class="control-label" for="settings-octoremote-user">{{ _('User Button 1') }}</label>
+				<div class="controls">
+					<select id="settings-octoremote-user1mode" data-bind="options: settings.plugins.OctoRemote.userKeyModeOptions, value: settings.plugins.OctoRemote.userKeyMode1"></select>
+					<div class="input-append">		
+					<input id="settings-octoremote-user1value" type="text" class="input text-right" data-bind="value: settings.plugins.OctoRemote.userCommand1">
+					</div>
+				</div>
+			</div>
 
+			<div>
+				<label class="control-label" for="settings-octoremote-user">{{ _('User Button 2') }}</label>
+				<div class="controls">
+					<select id="settings-octoremote-user2mode" data-bind="options: settings.plugins.OctoRemote.userKeyModeOptions, value: settings.plugins.OctoRemote.userKeyMode2"></select>
+					<div class="input-append">		
+					<input id="settings-octoremote-user2value" type="text" class="input text-right" data-bind="value: settings.plugins.OctoRemote.userCommand2">
+					</div>
+				</div>
+			</div>
+			
+			<div>
+				<label class="control-label" for="settings-octoremote-user">{{ _('User Button 3') }}</label>
+				<div class="controls">
+					<select id="settings-octoremote-user3mode" data-bind="options: settings.plugins.OctoRemote.userKeyModeOptions, value: settings.plugins.OctoRemote.userKeyMode3"></select>
+					<div class="input-append">		
+					<input id="settings-octoremote-user3value" type="text" class="input text-right" data-bind="value: settings.plugins.OctoRemote.userCommand3">
+					</div>
+				</div>
+			</div>
+		
+			<div>
+				<label class="control-label" for="settings-octoremote-user">{{ _('User Button 4') }}</label>
+				<div class="controls">
+					<select id="settings-octoremote-user4mode" data-bind="options: settings.plugins.OctoRemote.userKeyModeOptions, value: settings.plugins.OctoRemote.userKeyMode4"></select>
+					<div class="input-append">		
+					<input id="settings-octoremote-user4value" type="text" class="input text-right" data-bind="value: settings.plugins.OctoRemote.userCommand4">
+					</div>
+				</div>
+			</div>
+			
+			<div>
+				<label class="control-label" for="settings-octoremote-user">{{ _('User Button 5') }}</label>
+				<div class="controls">
+					<select id="settings-octoremote-user5mode" data-bind="options: settings.plugins.OctoRemote.userKeyModeOptions, value: settings.plugins.OctoRemote.userKeyMode5"></select>
+					<div class="input-append">		
+					<input id="settings-octoremote-user5value" type="text" class="input text-right" data-bind="value: settings.plugins.OctoRemote.userCommand5">
+					</div>
+				</div>
+			</div>
+			
+		</div>
     
 </form>
