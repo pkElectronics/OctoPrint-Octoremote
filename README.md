@@ -14,6 +14,7 @@ OctoRemote consists of two components, the Octoprint plugin and an arduino based
 * Start/Resume Print
 * Select Extruder
 * Select movement distance (4 options)
+* User programmable keys Supporting custom GCODE and OctoPrint Scripting
 
 ## Setup
 
@@ -48,6 +49,14 @@ If you stick to the recommended schematic you will end up with a key assignment 
 
 ![Alt text](/doku/Keypad.PNG)
 
-In the future there will also be a custom made PCB which includes all necessary parts and uses cherry mx switches for the keys. The device will still be compatible with the Arduino IDE for easy upgrading and hacking. Development of the PCB has not yet started but is scheduled for mid of april.
+Please Note: User Key 1 is only available when the Tool/Extruder count is 1. Otherwise the key is used to switch between extruders.
+
+In the future there will also be a custom made PCB which includes all necessary parts and uses cherry mx switches for the keys. If you are interested in getting a custom OctoRemote Board
+feel free to contact me.
+The device is still be compatible with the Arduino IDE for easy upgrading and hacking. Development of the Controller is in pre-production state and will be heading for Kickstarter soon.
+
+![Alt text](/doku/octoremote.jpg)
 
 Regardless of the type of the used hardware, programming is done using the Arduino IDE and the sourcecodes from the arduino/OctoRemote/ folder.
+
+
